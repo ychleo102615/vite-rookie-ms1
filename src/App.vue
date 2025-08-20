@@ -1,6 +1,6 @@
 <script setup>
 import MerchCard from './component/MerchCard.vue'
-import Cart from './component/Cart.vue'
+import CartItem from './component/CartItem.vue'
 import Notification from './component/Notification.vue'
 
 import { ref } from 'vue'
@@ -14,11 +14,59 @@ const merchs = ref([
     image:
       'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=2065&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==',
   },
+  {
+    id: 2,
+    name: '無線藍牙鍵盤',
+    description: '輕薄設計，支援多裝置快速切換',
+    price: 1290,
+    image:
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0',
+  },
+  {
+    id: 3,
+    name: '4K 曲面螢幕',
+    description: '沉浸式體驗，護眼模式與高刷新率',
+    price: 8990,
+    image: 'https://img.4gamers.com.tw/news-image/c1bb4832-71fb-42e7-89c1-5f9df66bf1b4.jpg',
+  },
+  {
+    id: 4,
+    name: '智慧手錶',
+    description: '全天候心率監測，支援GPS與防水設計',
+    price: 4990,
+    image: 'https://mbzhu.com/wp-content/uploads/2023/10/61OEuoqFqYL-1024x1024.jpg',
+  },
+  {
+    id: 5,
+    name: '遊戲滑鼠',
+    description: '高精度感應器，RGB 燈效與可編程按鍵',
+    price: 1890,
+    image: 'https://image.benq.com/is/image/benqco/01-S2C-top-1?$ResponsivePreset$&fmt=png-alpha',
+  },
 ])
+
+const cartItems = ref([])
 
 const onMerchAdded = (merch) => {
   // 在這裡處理加入購物車的邏輯
-  console.log('加入購物車:', merch)
+  const cartItem = cartItems.value.find((item) => item.id === merch.id)
+  if (cartItem) {
+    cartItem.quantity++
+  } else {
+    cartItems.value.push({
+      id: merch.id,
+      name: merch.name,
+      price: merch.price,
+      quantity: 1,
+    })
+  }
+}
+
+const onRemoveItem = (itemId) => {
+  const index = cartItems.value.findIndex((item) => item.id === itemId)
+  if (index !== -1) {
+    cartItems.value.splice(index, 1)
+  }
 }
 </script>
 
@@ -37,7 +85,19 @@ const onMerchAdded = (merch) => {
           />
         </div>
       </div>
-      <Cart />
+
+      <!-- 購物車區 -->
+      <div class="col-md-4">
+        <h2 class="mb-3">購物車</h2>
+        <ul class="list-group mb-3">
+          <CartItem
+            @removeItem="onRemoveItem"
+            v-for="item in cartItems"
+            :key="`cart${item.id}`"
+            :cartItem="item"
+          />
+        </ul>
+      </div>
     </div>
     <Notification />
   </div>
