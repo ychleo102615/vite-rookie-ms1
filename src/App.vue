@@ -14,11 +14,7 @@ import Notification from './component/Notification.vue'
   </div>
 </template>
 
-<style>
-body {
-  background: #f2f2f2f2;
-}
-
+<style scoped>
 .card-img-top {
   height: 150px;
   object-fit: cover;
