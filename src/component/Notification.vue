@@ -1,15 +1,52 @@
 <template>
   <!-- 通知元件 -->
-  <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
-    <div class="toast show align-items-center text-white bg-success border-0">
+  <transition-group
+    tag="div"
+    name="fade"
+    class="position-fixed bottom-0 end-0 p-3"
+    style="z-index: 1050"
+  >
+    <div
+      v-for="context in notifications"
+      :key="context.id"
+      class="toast show align-items-center text-white border-0 mb-2"
+      :class="{
+        'bg-success': context.type === 'add',
+        'bg-secondary': context.type === 'delete',
+        'bg-primary': context.type === 'update',
+      }"
+    >
       <div class="d-flex">
-        <div class="toast-body">這是通知訊息</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto"></button>
+        <div class="toast-body">{{ context.message }}</div>
+        <button
+          :disabled="context.removed"
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          @click="emits('closeNotification', context.id)"
+        ></button>
       </div>
     </div>
-  </div>
+  </transition-group>
 </template>
 
-<script setup></script>
+<script setup>
+import { inject, defineEmits } from 'vue'
 
-<style scoped></style>
+const notifications = inject('notifications')
+const emits = defineEmits(['closeNotification'])
+</script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-leave-active {
+  pointer-events: none;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

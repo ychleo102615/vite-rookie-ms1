@@ -3,7 +3,7 @@ import MerchCard from './component/MerchCard.vue'
 import CartItem from './component/CartItem.vue'
 import Notification from './component/Notification.vue'
 
-import { ref } from 'vue'
+import { ref, provide } from 'vue'
 
 const merchs = ref([
   {
@@ -46,12 +46,28 @@ const merchs = ref([
 ])
 
 const cartItems = ref([])
+const notifications = ref([])
+/*
+context: {
+  removed: boolean
+  id: number
+  message: string
+  type: add or delete
+}
+ */
+provide('notifications', notifications)
+let notifyCount = 0
 
-const onMerchAdded = (merch) => {
+const addMerch = (merch) => {
   // 在這裡處理加入購物車的邏輯
+  notifyCount++
+  let message = ''
+  let type = ''
   const cartItem = cartItems.value.find((item) => item.id === merch.id)
   if (cartItem) {
     cartItem.quantity++
+    message = '已增加商品數量'
+    type = 'update'
   } else {
     cartItems.value.push({
       id: merch.id,
@@ -59,14 +75,44 @@ const onMerchAdded = (merch) => {
       price: merch.price,
       quantity: 1,
     })
+    message = '已加入購物車'
+    type = 'add'
+  }
+  const context = {
+    removed: false,
+    id: notifyCount,
+    message: message,
+    type: type,
+  }
+  notifications.value.push(context)
+  setTimeout(() => {
+    removeNotification(context.id)
+  }, 3000)
+}
+
+const removeNotification = (id) => {
+  const index = notifications.value.findIndex((x) => x.id == id)
+  if (index >= 0) {
+    notifications.value.splice(index, 1) // 只移除該索引的單一項目
   }
 }
 
-const onRemoveItem = (itemId) => {
+const removeCartItem = (itemId) => {
   const index = cartItems.value.findIndex((item) => item.id === itemId)
   if (index !== -1) {
     cartItems.value.splice(index, 1)
   }
+  notifyCount++
+  const id = notifyCount
+  notifications.value.push({
+    removed: false,
+    id: id,
+    message: '已從購物車移除商品',
+    type: 'delete',
+  })
+  setTimeout(() => {
+    removeNotification(id)
+  }, 3000)
 }
 </script>
 
@@ -77,12 +123,7 @@ const onRemoveItem = (itemId) => {
       <div class="col-md-8">
         <h2 class="mb-3">商品列表</h2>
         <div class="row">
-          <MerchCard
-            @addMerch="onMerchAdded"
-            v-for="merch in merchs"
-            :key="merch.id"
-            :merch="merch"
-          />
+          <MerchCard @addMerch="addMerch" v-for="merch in merchs" :key="merch.id" :merch="merch" />
         </div>
       </div>
 
@@ -91,7 +132,7 @@ const onRemoveItem = (itemId) => {
         <h2 class="mb-3">購物車</h2>
         <ul class="list-group mb-3">
           <CartItem
-            @removeItem="onRemoveItem"
+            @removeItem="removeCartItem"
             v-for="item in cartItems"
             :key="`cart${item.id}`"
             :cartItem="item"
@@ -99,7 +140,7 @@ const onRemoveItem = (itemId) => {
         </ul>
       </div>
     </div>
-    <Notification />
+    <Notification @closeNotification="removeNotification" />
   </div>
 </template>
 
