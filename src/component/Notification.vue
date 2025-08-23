@@ -19,7 +19,6 @@
       <div class="d-flex">
         <div class="toast-body">{{ context.message }}</div>
         <button
-          :disabled="context.removed"
           type="button"
           class="btn-close btn-close-white me-2 m-auto"
           @click="emits('closeNotification', context.id)"
@@ -39,7 +38,7 @@ const emits = defineEmits(['closeNotification'])
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 .fade-leave-active {
   pointer-events: none;

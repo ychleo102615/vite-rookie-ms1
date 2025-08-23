@@ -5,6 +5,7 @@ import Notification from './component/Notification.vue'
 
 import { ref, provide } from 'vue'
 
+const waitDur = 2000
 const merchs = ref([
   {
     id: 1,
@@ -87,7 +88,7 @@ const addMerch = (merch) => {
   notifications.value.push(context)
   setTimeout(() => {
     removeNotification(context.id)
-  }, 3000)
+  }, waitDur)
 }
 
 const removeNotification = (id) => {
@@ -112,7 +113,7 @@ const removeCartItem = (itemId) => {
   })
   setTimeout(() => {
     removeNotification(id)
-  }, 3000)
+  }, waitDur)
 }
 </script>
 
