@@ -21,7 +21,7 @@
         <button
           type="button"
           class="btn-close btn-close-white me-2 m-auto"
-          @click="emits('closeNotification', context.id)"
+          @click="removeNotification(context.id)"
         ></button>
       </div>
     </div>
@@ -29,10 +29,9 @@
 </template>
 
 <script setup>
-import { inject, defineEmits } from 'vue'
+import { inject } from 'vue'
 
-const notifications = inject('notifications')
-const emits = defineEmits(['closeNotification'])
+const { notifications, removeNotification } = inject('notifications')
 </script>
 
 <style scoped>

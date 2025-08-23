@@ -56,7 +56,6 @@ context: {
   type: add or delete
 }
  */
-provide('notifications', notifications)
 let notifyCount = 0
 
 const addMerch = (merch) => {
@@ -115,6 +114,11 @@ const removeCartItem = (itemId) => {
     removeNotification(id)
   }, waitDur)
 }
+
+provide('notifications', {
+  notifications,
+  removeNotification,
+})
 </script>
 
 <template>
@@ -141,7 +145,7 @@ const removeCartItem = (itemId) => {
         </ul>
       </div>
     </div>
-    <Notification @closeNotification="removeNotification" />
+    <Notification />
   </div>
 </template>
 
