@@ -3,7 +3,7 @@ import MerchCard from './component/MerchCard.vue'
 import CartItem from './component/CartItem.vue'
 import Notification from './component/Notification.vue'
 
-import { ref, provide } from 'vue'
+import { ref, provide, computed } from 'vue'
 
 const waitDur = 2000
 const merchs = ref([
@@ -47,6 +47,9 @@ const merchs = ref([
 ])
 
 const cartItems = ref([])
+const totalPrice = computed(() =>
+  cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0),
+)
 const notifications = ref([])
 /*
 context: {
@@ -143,6 +146,7 @@ provide('notifications', {
             :cartItem="item"
           />
         </ul>
+        <p class="pe-3 text-end" v-if="cartItems.length > 0">總金額：${{ totalPrice }}</p>
       </div>
     </div>
     <Notification />
