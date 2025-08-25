@@ -5,7 +5,8 @@ import Notification from './component/Notification.vue'
 
 import { ref, provide, computed } from 'vue'
 
-const waitDur = 2000
+/* Variable */
+const WAIT_DUR = 2000
 const merchs = ref([
   {
     id: 1,
@@ -51,26 +52,19 @@ const totalPrice = computed(() =>
   cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0),
 )
 const notifications = ref([])
-/*
-context: {
-  removed: boolean
-  id: number
-  message: string
-  type: add or delete
-}
- */
 let notifyCount = 0
 
+/* Method */
 const addMerch = (merch) => {
   // 在這裡處理加入購物車的邏輯
   notifyCount++
-  let message = ''
-  let type = ''
   const cartItem = cartItems.value.find((item) => item.id === merch.id)
   if (cartItem) {
     cartItem.quantity++
-    message = '已增加商品數量'
-    type = 'update'
+    pushNotification({
+      message: '已增加商品數量',
+      type: 'update',
+    })
   } else {
     cartItems.value.push({
       id: merch.id,
@@ -78,19 +72,19 @@ const addMerch = (merch) => {
       price: merch.price,
       quantity: 1,
     })
-    message = '已加入購物車'
-    type = 'add'
+    pushNotification({
+      message: '已加入購物車',
+      type: 'add',
+    })
   }
-  const context = {
-    removed: false,
-    id: notifyCount,
-    message: message,
-    type: type,
-  }
+}
+
+const pushNotification = (context) => {
+  context.id = notifyCount++
   notifications.value.push(context)
   setTimeout(() => {
     removeNotification(context.id)
-  }, waitDur)
+  }, WAIT_DUR)
 }
 
 const removeNotification = (id) => {
@@ -105,19 +99,13 @@ const removeCartItem = (itemId) => {
   if (index !== -1) {
     cartItems.value.splice(index, 1)
   }
-  notifyCount++
-  const id = notifyCount
-  notifications.value.push({
-    removed: false,
-    id: id,
+  pushNotification({
     message: '已從購物車移除商品',
     type: 'delete',
   })
-  setTimeout(() => {
-    removeNotification(id)
-  }, waitDur)
 }
 
+/* Wiring */
 provide('notifications', {
   notifications,
   removeNotification,

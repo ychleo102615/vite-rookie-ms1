@@ -1,7 +1,7 @@
 <template>
   <div class="col-md-4 mb-4">
     <div class="card h-100">
-      <img :src="merch.image" class="card-img-top" />
+      <img :src="merch.image" class="card-img-top" :alt="merch.name" />
       <div class="card-body">
         <h5 class="card-title">{{ merch.name }}</h5>
         <p class="card-text">{{ merch.description }}</p>
